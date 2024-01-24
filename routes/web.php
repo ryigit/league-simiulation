@@ -25,3 +25,5 @@ Route::post('/fixture/generate', [LeagueController::class, 'generateFixture'])->
 Route::get('/fixture/show', [LeagueController::class, 'showFixture'])->name('fixture.show');
 
 Route::get('/simulation', [SimulationController::class, 'index'])->name('simulation.index');
+Route::post('/simulation/next_week', [SimulationController::class, 'simulateNextWeek'])->name('simulation.simulateNextWeek');
+Route::post('/simulation/all', [SimulationController::class, 'simulateAllWeeks'])->name('simulation.simulateAllWeeks');
