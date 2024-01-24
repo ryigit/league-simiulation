@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LeagueController;
+use App\Http\Controllers\SimulationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,3 +23,5 @@ Route::get('/start', [LeagueController::class, 'start']);
 
 Route::post('/fixture/generate', [LeagueController::class, 'generateFixture'])->name('fixture.generate');
 Route::get('/fixture/show', [LeagueController::class, 'showFixture'])->name('fixture.show');
+
+Route::get('/simulation', [SimulationController::class, 'index'])->name('simulation.index');
