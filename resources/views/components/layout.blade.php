@@ -12,9 +12,8 @@
     </head>
     <body class="bg-slate-800">
         <div class="max-w-7xl mx-auto my-6">
-            {{$slot}}
+            {{ $slot }}
         </div>
-        <script src="{{ mix('js/app.js') }}"></script>
         @stack('scripts')
     </body>
 </html>
