@@ -16,7 +16,11 @@ class SimulationController extends Controller
     {
         $teams = Team::all();
         $week = Game::where('is_played', 0)->first();
-        $weekGames = Game::where('week', $week->week)->get();
+
+        $weekGames = collect();
+        if($week) {
+            $weekGames = Game::where('week', $week->week)->get();
+        }
 
         $predictionService = new PredictionService();
 

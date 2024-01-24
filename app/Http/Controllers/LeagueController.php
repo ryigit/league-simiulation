@@ -42,4 +42,19 @@ class LeagueController extends Controller
 
         return view('fixture', ['weeks' => $weeks]);
     }
+
+    public function reset()
+    {
+        Game::truncate();
+
+        Team::all()->each(fn(Team $team) => $team->update([
+            'point' => 0,
+            'win' => 0,
+            'loss' => 0,
+            'draw' => 0,
+            'goal_difference' => 0,
+        ]));
+
+        return redirect()->route('start');
+    }
 }

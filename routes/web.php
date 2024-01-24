@@ -19,7 +19,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/start', [LeagueController::class, 'start']);
+Route::get('/start', [LeagueController::class, 'start'])->name('start');;
+Route::post('/reset', [LeagueController::class, 'reset'])->name('reset');
 
 Route::post('/fixture/generate', [LeagueController::class, 'generateFixture'])->name('fixture.generate');
 Route::get('/fixture/show', [LeagueController::class, 'showFixture'])->name('fixture.show');
