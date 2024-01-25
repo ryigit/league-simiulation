@@ -19,12 +19,12 @@ class TeamRepository
 
     public function resetTeams(): void
     {
-        $this->getTeams()->each(fn(Team $team) => $team->update([
+        Team::query()->update([
             'point' => 0,
             'win' => 0,
             'loss' => 0,
             'draw' => 0,
             'goal_difference' => 0,
-        ]));
+        ]);
     }
 }

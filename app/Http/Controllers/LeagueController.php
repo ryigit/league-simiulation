@@ -16,6 +16,7 @@ class LeagueController extends Controller
         public TeamRepository $teamRepository,
         public GameRepository $gameRepository,
     ){}
+
     public function start(): View
     {
         $teams = $this->teamRepository->getTeams();

@@ -11,6 +11,7 @@ class SimulationService
         public GameRepository $gameRepository,
         public PredictionService $predictionService,
     ){}
+
     public function simulateWeek(int $week): void
     {
         $games = $this->gameRepository->getWeekGames($week);
@@ -54,6 +55,5 @@ class SimulationService
             $game->awayTeam->point++;
             $game->awayTeam->save();
         }
-
     }
 }

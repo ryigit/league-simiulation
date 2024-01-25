@@ -18,13 +18,13 @@ class FixtureService
     {
         $matches = [];
 
-        $len = count($this->teams);
+        $teamCount = count($this->teams);
         $weekCount = 2 * (count($this->teams) - 1);
 
         for ($week = 1; $week <= $weekCount; $week++) {
-            for ($i = 0; $i < $len/2; $i++) {
+            for ($i = 0; $i < $teamCount/2; $i++) {
                 $homeTeam = $this->teams[$i];
-                $awayTeam = $this->teams[$len - 1 - $i];
+                $awayTeam = $this->teams[$teamCount - 1 - $i];
 
                 if ($week % 2 === 0) {
                     $matches[] = [

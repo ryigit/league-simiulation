@@ -51,7 +51,7 @@ class PredictionService
 
     public function predictMatchResult(Team $home, Team $away): array
     {
-        [$homeDominance, $awayDominance] = $this->getDominance($home->power, $away->power);
+        [$homeDominance, $awayDominance] = $this->getRelativePower($home->power, $away->power);
 
         $homeScore = intval(ceil((rand(0, rand(1, 3))) + (($homeDominance - $awayDominance) / 100)));
         $awayScore = intval(ceil((rand(0, rand(1, 3))) + (($awayDominance - $homeDominance) / 100)));
@@ -62,7 +62,7 @@ class PredictionService
         ];
     }
 
-    public function getDominance(float $homeStrength, float $awayStrength): array
+    private function getRelativePower(float $homeStrength, float $awayStrength): array
     {
         $total = max($homeStrength + $awayStrength, 1);
 
