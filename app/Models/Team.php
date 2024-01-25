@@ -37,7 +37,7 @@ class Team extends Model
     protected function power(): Attribute
     {
         return new Attribute(get: fn() => max(
-            $this->point + $this->goal_difference/2, 0
+            $this->point + $this->goal_difference/2, 1
         ));
     }
 }
