@@ -1,21 +1,24 @@
 <x-layout>
-    <div class="flex items-center">
+    <div class="grid grid-cols-1 text-lg border-b border-amber-50 mb-2">
+        <h1 class="text-white py-4">League Teams</h1>
+    </div>
+    <div class="flex items-center mb-2">
         <table class="border-collapse table-auto w-full text-sm">
             <thead class="table-auto">
                 <tr>
-                    <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">Team Name</th>
+                    <th class="border-b dark:border-slate-600 font-medium p-4 text-slate-400 dark:text-slate-200 text-left">Team Name</th>
                 </tr>
             </thead>
             <tbody class="bg-white dark:bg-slate-800">
             @foreach($teams as $team)
                 <tr>
-                    <td class="border-b border-slate-200 dark:border-slate-600 p-4 pl-8 text-slate-500 dark:text-slate-400">{{ $team->name }}</td>
+                    <td class="border-b border-slate-200 dark:border-slate-600 p-4 text-slate-500 dark:text-slate-400">{{ $team->name }}</td>
                 </tr>
             @endforeach
             </tbody>
         </table>
     </div>
-    <div class="flex items-center">
+    <div class="flex items-center p-4">
         <form action="{{route('fixture.generate')}}" method="post">
             @csrf
             <button
