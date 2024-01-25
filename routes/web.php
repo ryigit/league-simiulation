@@ -15,11 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/start', [LeagueController::class, 'start'])->name('start');;
+Route::get('/', [LeagueController::class, 'start'])->name('start');;
 Route::post('/reset', [LeagueController::class, 'reset'])->name('reset');
 
 Route::post('/fixture/generate', [LeagueController::class, 'generateFixture'])->name('fixture.generate');
