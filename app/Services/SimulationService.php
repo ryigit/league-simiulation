@@ -3,20 +3,24 @@
 namespace App\Services;
 
 use App\Models\Game;
-use Illuminate\Support\Facades\Log;
+use App\Repositories\GameRepository;
 
 class SimulationService
 {
+    public function __construct(
+        public GameRepository $gameRepository,
+        public PredictionService $predictionService,
+    ){}
     public function simulateWeek(int $week): void
     {
-        $games = Game::where('week', $week)->get();
+        $games = $this->gameRepository->getWeekGames($week);
 
         $games->each(fn(Game $game) => $this->simulateGame($game));
     }
 
     private function simulateGame(Game $game): void
     {
-        $scores = (new PredictionService())->predictMatchResult($game->homeTeam, $game->awayTeam);
+        $scores = $this->predictionService->predictMatchResult($game->homeTeam, $game->awayTeam);
 
         $game->home_goals = $scores['home_goals'];
         $game->away_goals = $scores['away_goals'];

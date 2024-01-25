@@ -2,40 +2,48 @@
 
 namespace App\Services;
 
-use App\Models\Game;
 use App\Models\Team;
-use Illuminate\Support\Facades\Log;
+use App\Repositories\GameRepository;
+use App\Repositories\TeamRepository;
 
 class PredictionService
 {
+    public function __construct(
+        public GameRepository $gameRepository,
+        public TeamRepository $teamRepository,
+    ){}
     public function calculateChances()
     {
-        $teams = Team::orderByDesc('point')->get();
+        $teams = $this->teamRepository->getTeamsByPoint();
 
         $totalPower = $teams->sum('power');
         $topPoint = $teams->first()->point;
+        $secondTopPoint = $teams->skip(1)->first()->point;
 
         $weekCount = 2 * (count($teams) - 1);
 
-        $nextWeek = Game::where('is_played', 0)->first();
+        $nextWeek = $this->gameRepository->getNextWeek();
 
         $nextWeekId = $nextWeek ? $nextWeek->week : $weekCount + 1;
 
         $availablePoints = 3 * ($weekCount - $nextWeekId + 1);
 
-        return $teams->each(function ($team) use ($totalPower, $topPoint, $availablePoints) {
-            $team->chance = round($this->calculateTeamChance($team, $totalPower, $topPoint, $availablePoints), 2);
+        return $teams->each(function ($team) use ($totalPower, $topPoint, $availablePoints, $secondTopPoint) {
+            $team->chance = round($this->calculateTeamChance($team, $totalPower, $topPoint, $availablePoints, $secondTopPoint), 2);
         })->sortByDesc('chance');
 
     }
 
-    private function calculateTeamChance(Team $team, $totalPower, $topPoint, $availablePoints)
+    private function calculateTeamChance(Team $team, float $totalPower, int $topPoint, int $availablePoints, int $secondTopPoint)
     {
-        Log::info('Calculating Chance For:' . $team->id);
-
         //There is no mathematical chance for championship
         if ($availablePoints + $team->point < $topPoint) {
             return 0;
+        }
+
+        //Team mathematically won the league
+        if ($availablePoints + $secondTopPoint < $team->point) {
+            return 100;
         }
 
         return max(($team->power / max($totalPower, 1)) * 100, 0);
@@ -44,9 +52,6 @@ class PredictionService
     public function predictMatchResult(Team $home, Team $away): array
     {
         [$homeDominance, $awayDominance] = $this->getDominance($home->power, $away->power);
-
-        Log::info('Home:' . $homeDominance);
-        Log::info('Away:' . $awayDominance);
 
         $homeScore = intval(ceil((rand(0, rand(1, 3))) + (($homeDominance - $awayDominance) / 100)));
         $awayScore = intval(ceil((rand(0, rand(1, 3))) + (($awayDominance - $homeDominance) / 100)));

@@ -4,33 +4,41 @@ namespace App\Http\Controllers;
 
 use App\Models\Game;
 use App\Models\Team;
+use App\Repositories\GameRepository;
+use App\Repositories\TeamRepository;
 use App\Services\FixtureService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
 class LeagueController extends Controller
 {
+    public function __construct(
+        public TeamRepository $teamRepository,
+        public GameRepository $gameRepository,
+    ){}
     public function start(): View
     {
-        $teams = Team::all();
+        $teams = $this->teamRepository->getTeams();
 
         return view('start', ['teams' => $teams]);
     }
 
     public function generateFixture(): RedirectResponse
     {
-        $teams = Team::all();
+        $teams = $this->teamRepository->getTeams();
 
         $fixtureService = new FixtureService($teams);
 
         $matches = $fixtureService->createFixtures();
 
         foreach ($matches as $match) {
-            Game::create([
-                'home_team_id' => $match['away_team_id'],
-                'away_team_id' => $match['home_team_id'],
-                'week' => $match['week'],
-            ]);
+            $this->gameRepository->createGame(
+                [
+                    'home_team_id' => $match['away_team_id'],
+                    'away_team_id' => $match['home_team_id'],
+                    'week' => $match['week'],
+                ]
+            );
         }
 
         return redirect()->route('fixture.show');
@@ -38,22 +46,16 @@ class LeagueController extends Controller
 
     public function showFixture(): View
     {
-        $weeks = Game::all()->groupBy('week');
+        $weeks = $this->gameRepository->getAllGames()->groupBy('week');
 
         return view('fixture', ['weeks' => $weeks]);
     }
 
-    public function reset()
+    public function reset(): RedirectResponse
     {
-        Game::truncate();
+        $this->gameRepository->resetGames();
 
-        Team::all()->each(fn(Team $team) => $team->update([
-            'point' => 0,
-            'win' => 0,
-            'loss' => 0,
-            'draw' => 0,
-            'goal_difference' => 0,
-        ]));
+        $this->teamRepository->resetTeams();
 
         return redirect()->route('start');
     }
